@@ -1,72 +1,170 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Summary</title>
-    <style>
-        table {
-            width: 100%;
-            border-collapse: collapse;
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Summary</title>
+  <style>
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    th, td {
+      border: 1px solid black;
+      padding: 8px;
+      text-align: left;
+    }
+    th {
+      background-color: #7c7c7cd0;
+    }
+    .add-btn {
+      margin: 10px 0;
+      padding: 5px 10px;
+      background-color: green;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+  </style>
+  <script>
+    // checks that end date is after start date
+    function attachDateValidation(row) {
+      const startInput = row.querySelector('input[name="start-date"]');
+      const endInput = row.querySelector('input[name="end-date"]');
+
+      if (!startInput || !endInput) return;
+
+      endInput.addEventListener('change', function () {
+        const start = new Date(startInput.value);
+        const end = new Date(endInput.value);
+        if (startInput.value && end <= start) {
+          alert('End date must be after start date.');
+          endInput.value = '';
         }
-        th, td {
-            border: 1px solid black;
-            padding: 8px;
-            text-align: left;
-        }
-        th {
-            background-color: #7c7c7cd0;
-        }
-        .add-btn {
-            margin: 10px 0;
-            padding: 5px 10px;
-            background-color: green;
-            color: white;
-            border: none;
-            cursor: pointer;
-        }
-    </style>
+      });
+    }
+
+    // calculate total
+    function calculateTotals() {
+      let totalBase = 0;
+      let totalDiscount = 0;
+
+      document.querySelectorAll('input[name="base-cost"]').forEach(input => {
+        totalBase += parseFloat(input.value) || 0;
+      });
+
+      document.querySelectorAll('input[name="discounted-cost"]').forEach(input => {
+        totalDiscount += parseFloat(input.value) || 0;
+      });
+
+      document.getElementById('total-base').textContent = totalBase.toFixed(2);
+      document.getElementById('total-discount').textContent = totalDiscount.toFixed(2);
+    }
+
+    // add row
+    function addRow() {
+  const table = document.getElementById('summary-table');
+  const firstDataRow = table.rows[1];
+  const newRow = firstDataRow.cloneNode(true);
+
+  // clear input values
+  newRow.querySelectorAll('input, select').forEach(input => {
+    input.value = '';
+  });
+
+  attachDateValidation(newRow);
+
+  // attach listeners to new cost fields
+  newRow.querySelectorAll('input[name="base-cost"], input[name="discounted-cost"]').forEach(input => {
+    input.addEventListener('input', calculateTotals);
+  });
+
+  // insert above total row safely
+  const totalRow = document.getElementById('total-row');
+  totalRow.parentNode.insertBefore(newRow, totalRow);
+
+  calculateTotals();
+}
+    // sets up validation for total
+    window.addEventListener('DOMContentLoaded', function () {
+      const firstRow = document.querySelector('#summary-table tr:nth-child(2)');
+      attachDateValidation(firstRow);
+
+      firstRow.querySelectorAll('input[name="base-cost"], input[name="discounted-cost"]').forEach(input => {
+        input.addEventListener('input', calculateTotals);
+      });
+
+      calculateTotals();
+    });
+  </script>
 </head>
 <body>
-    <h2>T23009 Tool</h2>
-    <form method="POST" action="/add_row">
-        <button type="submit" class="add-btn">+ Add Row</button>
-    </form>
-    <table id="summary-table">
-        <tr>
-            <th>Name</th>
-            <th>Supplier</th>
-            <th>Role</th>
-            <th>Level</th>
-            <th>Start Date</th>
-            <th>End Date</th>
-            <th>Base Cost</th>
-            <th>Discounted Cost</th>
-        </tr>
-        {% for specialist in specialists %}
-        <tr>
-            <td>{John Doe}</td>
-            <td>ABC Corp</td>
-            <td>Software Engineer</td>
-            <td>Senior</td>
-            <td>2025-01-01</td>
-            <td>2026-01-01</td>
-            <td>5000</td>
-            <td>4500</td>
-        </tr>
-        {% endfor %}
-    </table>
+  <h2>T23009 Tool</h2>
+  <button type="button" class="add-btn" onclick="addRow()">+ Add Row</button>
+  <table id="summary-table">
+    <tr>
+      <th>Name</th>
+      <th>Supplier</th>
+      <th>Role</th>
+      <th>Level</th>
+      <th>Start Date</th>
+      <th>End Date</th>
+      <th>Base Cost</th>
+      <th>Discounted Cost</th>
+    </tr>
+    <tr>
+      <td><input type="text" /></td>
+      <td>
+        <select name="supplier">
+          <option value="">-- Select --</option>
+          <option value="accenture">ACCENTURE SG SERVICES PTE. LTD.</option>
+          <option value="activate">ACTIVATE INTERACTIVE PTE LTD</option>
+        </select>
+      </td>
+      <td>
+        <select name="job-role">
+          <option value="">-- Select --</option>
+          <option value="application-security-engineer">Application Security Engineer</option>
+          <option value="backend-engineer">Backend Engineer</option>
+          <option value="application-security-engineer">Application Security Engineer</option>
+          <option value="backend-engineer">Backend Engineer</option>
+          <option value="business-analyst">Business Analyst</option>
+          <option value="cots-engineer">COTS Engineer</option>
+          <option value="data-engineer">Data Engineer</option>
+          <option value="database-administrator">Database Administrator</option>
+          <option value="delivery-manager">Delivery Manager</option>
+          <option value="devsecops-engineer">DevSecOps Engineer</option>
+          <option value="frontend-engineer">Frontend Engineer</option>
+          <option value="full-stack-engineer">Full-Stack Engineer</option>
+          <option value="interaction-designer">Interaction Designer</option>
+          <option value="it-infrastructure-engineer">IT Infrastructure Engineer</option>
+          <option value="mobile-engineer">Mobile Engineer</option>
+          <option value="operations-support-engineer">Operations Support Engineer</option>
+          <option value="project-manager">Project Manager</option>
+          <option value="service-designer">Service Designer</option>
+          <option value="software-quality-engineer">Software Quality Engineer</option>
+          <option value="solution-architect">Solution Architect</option>
+          <option value="visual-ui-designer">Visual / UI Designer</option>
+        </select>
+      </td>
+      <td>
+        <select name="level">
+          <option value="">-- Select --</option>
+          <option value="assoc-consultant">Assoc Consultant</option>
+          <option value="consultant">Consultant</option>
+          <option value="snr-consultant">Snr Consultant</option>
+        </select>
+      </td>
+      <td><input type="date" name="start-date" max="2028-07-28" /></td>
+      <td><input type="date" name="end-date" max="2028-07-28" /></td>
+      <td><input name="base-cost" type="number" min="0" /></td>
+      <td><input name="discounted-cost" type="number" min="0" /></td>
+    </tr>
+    <tr id="total-row">
+      <td colspan="6" style="text-align: right;"><strong>Total:</strong></td>
+      <td id="total-base">0</td>
+      <td id="total-discount">0</td>
+    </tr>
+  </table>
 </body>
 </html>
-
-<!--
-
-**           <td>{{ specialist.name }}</td>
-<td>{{ specialist.supplier }}</td>
-<td>{{ specialist.role }}</td>
-<td>{{ specialist.level }}</td>
-<td>{{ specialist.start_date }}</td>
-<td>{{ specialist.end_date }}</td>
-<td>{{ specialist.base_cost }}</td>
-<td>{{ specialist.discounted_cost }}</td>**
--->
