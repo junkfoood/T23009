@@ -8,6 +8,7 @@
     table {
       width: 100%;
       border-collapse: collapse;
+      margin-bottom: 20px
     }
     th, td {
       border: 1px solid black;
@@ -34,6 +35,13 @@
       padding: 10px;
       border: 1px solid #ccc;
       background: #f9f9f9;
+    }
+    #details-frame {
+  width: 100vw;
+  height: calc(100vh - 400px);
+  border: none;
+  display: none;
+  margin-top: 40px;
     }
   </style>
   <script>
@@ -101,58 +109,6 @@
       calculateTotals();
     }
 
-    // loop through each data row and send input to backend
-    function calculateAll() {
-      const resultBox = document.getElementById('sn1-results');
-      resultBox.innerHTML = ''; // clear previous results
-
-      const rows = document.querySelectorAll('#summary-table tr.data-row');
-
-      rows.forEach((row, index) => {
-        // get inputs from the row
-        const supplier = row.querySelector('[name="supplier"]').value;
-        const category = 'Cat 1A-1'; // fixed category for now
-        const role = row.querySelector('[name="job-role"]').value;
-        const level = row.querySelector('[name="level"]').value;
-        const start_date = row.querySelector('[name="start-date"]').value;
-        const end_date = row.querySelector('[name="end-date"]').value;
-
-        // send data to backend
-        fetch('/api/get_cost', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ supplier, category, role, level, start_date, end_date })
-        })
-        .then(res => res.json())
-        .then(data => {
-          // create result block
-          const section = document.createElement('div');
-          section.className = 'sn1-breakdown';
-
-          // if error, show error message
-          if (data.error) {
-            section.innerHTML = `<strong>Row ${index + 1}:</strong> ${data.error}`;
-          } else {
-            // if success, display SN1 breakdown
-            section.innerHTML = `
-              <h4>SN${index + 1} Breakdown</h4>
-              <p><strong>Supplier:</strong> ${supplier}</p>
-              <p><strong>Role:</strong> ${role}</p>
-              <p><strong>Level:</strong> ${level}</p>
-              <p><strong>Start:</strong> ${start_date}</p>
-              <p><strong>End:</strong> ${end_date}</p>
-              <p><strong>Total (Before Discount):</strong> $${data.total_cost_before_discount}</p>
-              <p><strong>Discount Applied:</strong> ${data.discount_percent}%</p>
-              <p><strong>Total (After Discount):</strong> $${data.total_cost_after_discount}</p>
-            `;
-          }
-
-          // add result to the page
-          resultBox.appendChild(section);
-        });
-      });
-    }
-
     // setup validation and listeners for the first row
     window.addEventListener('DOMContentLoaded', function () {
       const firstRow = document.querySelector('#summary-table tr:nth-child(2)');
@@ -165,61 +121,104 @@
 
       calculateTotals();
     });
+
+    //collect selections and open details.html
+    function goToDetails() {
+    const name = document.getElementById('name').value
+    const supplier = document.getElementById('supplier').value
+    const category = document.getElementById('category').value
+    const role = document.getElementById('role').value
+    const level = document.getElementById('level').value
+    const country = document.getElementById('country').value
+    const start = document.getElementById('start-date').value
+    const end = document.getElementById('end-date').value
+
+    const url = new URL('details.html', window.location.origin)
+    url.searchParams.set('name', name)
+    url.searchParams.set('supplier', supplier)
+    url.searchParams.set('category', category)
+    url.searchParams.set('role', role)
+    url.searchParams.set('level', level)
+    url.searchParams.set('country', country)
+    url.searchParams.set('start-date', start)
+    url.searchParams.set('end-date', end)
+
+    // opens within same page
+    const iframe = document.getElementById('details-frame');
+      iframe.src = url.toString();
+      iframe.style.display = 'block';
+  }
+
   </script>
 </head>
 <body>
   <h2>T23009 Tool</h2>
   <button type="button" class="add-btn" onclick="addRow()">+ Add Row</button>
-  <button type="button" class="calculate-btn" onclick="calculateAll()">Calculate All</button>
+  <button type="button" onclick="goToDetails(event)">Open Details</button>
 
   <table id="summary-table">
     <tr>
       <th>Name</th>
       <th>Supplier</th>
+      <th>Category</th>
       <th>Role</th>
       <th>Level</th>
+      <th>Country</th>
       <th>Start Date</th>
       <th>End Date</th>
       <th>Base Cost</th>
       <th>Discounted Cost</th>
     </tr>
     <tr>
-      <td><input type="text" /></td>
+      <td><input id="name" name="name" type="text" /></td>
       <td>
-        <select name="supplier">
+        <select id="supplier" name="supplier">
           <option value="">-- Select --</option>
           <option value="ACCENTURE SG SERVICES PTE. LTD.">ACCENTURE SG SERVICES PTE. LTD.</option>
           <option value="ACTIVATE INTERACTIVE PTE LTD">ACTIVATE INTERACTIVE PTE LTD</option>
         </select>
       </td>
       <td>
-        <select name="job-role">
+      <select id="category" name="category">
+        <option value="">-- Select --</option>
+        <option value="Cat 1A-1">Cat 1A-1</option>
+      </select>
+    </td>
+      <td>
+        <select id="role" name="role">
           <option value="">-- Select --</option>
-          <option value="application-security-engineer">Application Security Engineer</option>
-          <option value="backend-engineer">Backend Engineer</option>
-          <option value="business-analyst">Business Analyst</option>
+          <option value="Application Security Engineer">Application Security Engineer</option>
+          <option value="Backend Engineer">Backend Engineer</option>
+          <option value="Business Analyst">Business Analyst</option>
         </select>
       </td>
       <td>
-        <select name="level">
+        <select id="level" name="level">
           <option value="">-- Select --</option>
           <option value="Assoc Consultant">Assoc Consultant</option>
           <option value="Consultant">Consultant</option>
           <option value="Snr Consultant">Snr Consultant</option>
         </select>
       </td>
-      <td><input type="date" name="start-date" max="2028-07-28" /></td>
-      <td><input type="date" name="end-date" max="2028-07-28" /></td>
+      <td>
+        <select id="country" name="country">
+          <option value="">-- Select --</option>
+          <option value="India (Bangalore)">India (Bangalore)</option>
+          <option value="Philippines (Manila)">Philippines (Manila)</option>
+        </select>
+      </td>
+      <td><input id="start-date" type="date" name="start-date" max="2028-07-28" /></td>
+      <td><input id="end-date" type="date" name="end-date" max="2028-07-28" /></td>
       <td><input name="base-cost" type="number" min="0" /></td>
       <td><input name="discounted-cost" type="number" min="0" /></td>
     </tr>
     <tr id="total-row">
-      <td colspan="6" style="text-align: right;"><strong>Total:</strong></td>
+      <td colspan="8" style="text-align: right;"><strong>Total:</strong></td>
       <td id="total-base">0</td>
       <td id="total-discount">0</td>
     </tr>
   </table>
-
+  <iframe id="details-frame"></iframe>
   <!-- container for breakdown results -->
   <div id="sn1-results"></div>
 </body>

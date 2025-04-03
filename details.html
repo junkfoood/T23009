@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Details Page</title>
+  <style>
+    table {
+      border-collapse: collapse;
+      border: 2px solid;
+      width: 50%;
+      margin: 40px auto;
+      tr:hover {background-color: oklch(95.6% 0.045 203.388);}
+    }
+    td {
+      border: 1px solid #ccc;
+      padding: 8px;
+    }
+    th {
+      text-align: center;
+      background-color: #f0f0f0;
+    }
+    h3 {
+      margin: 0;
+    }
+    .full-width-table {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: auto;
+    margin: 5px;
+    text-align: center;    
+    }
+  </style>
+</head>
+<body>
+  <table>
+    <tr><td>Name</td><td id="cell-name"></td></tr>
+    <tr><td>Supplier</td><td id="cell-supplier"></td></tr>
+    <tr><td>Category</td><td id="cell-category"></td></tr>
+    <tr><td>Role</td><td id="cell-role"></td></tr>
+    <tr><td>Level</td><td id="cell-level"></td></tr>
+    <tr><td>Start Date</td><td id="cell-start"></td></tr>
+    <tr><td>End Date</td><td id="cell-end"></td></tr>
+  </table>
+
+  <h3 style="text-align: center; ">Monthly Breakdown</h3>
+  <table class="full-width-table">
+    <tr>
+      <th>Start Date</th>
+      <th>End Date</th>
+      <th>Month</th>
+      <th>Year Rate</th>
+      <th>Total No. of Working Days</th>
+      <th>No. of Days Worked</th>
+      <th>Rate</th>
+      <th>Total Cost Per Month Before Discount</th>
+      <th>Rate after Discount</th>
+      <th>Total Cost Per Mth</th>
+      <th> Total Cost</th>
+    </tr>
+    <tr>
+        <td>01-09-24</td>
+        <td>30-09-24</td>
+        <td>Sep-24</td>
+        <td>1</td>
+        <td>#REF!</td>
+        <td></td>
+        <td>19,200.00</td>
+        <td>19,200.00</td>
+        <td>0.00%</td>
+        <td>19,200.00</td>
+        <td>0.00</td>
+  </table>
+
+  <script>
+    const params = new URLSearchParams(window.location.search);
+
+    document.getElementById('cell-name').textContent = params.get('name') || '';
+    document.getElementById('cell-supplier').textContent = params.get('supplier') || '';
+    document.getElementById('cell-category').textContent = params.get('category') || '';
+    document.getElementById('cell-role').textContent = params.get('role') || '';
+    document.getElementById('cell-level').textContent = params.get('level') || '';
+    document.getElementById('cell-start').textContent = params.get('start-date') || '';
+    document.getElementById('cell-end').textContent = params.get('end-date') || '';
+  </script>
+</body>
+</html>
