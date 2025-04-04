@@ -37,11 +37,11 @@
       background: #f9f9f9;
     }
     #details-frame {
-  width: 100vw;
-  height: calc(100vh - 400px);
-  border: none;
-  display: none;
-  margin-top: 40px;
+      width: 100vw;
+      height: calc(100vh - 400px);
+      border: none;
+      display: none;
+      margin-top: 40px;
     }
   </style>
   <script>
@@ -167,7 +167,6 @@
       <th>Start Date</th>
       <th>End Date</th>
       <th>Base Cost</th>
-      <th>Discounted Cost</th>
     </tr>
     <tr>
       <td><input id="name" name="name" type="text" /></td>
@@ -210,10 +209,9 @@
       <td><input id="start-date" type="date" name="start-date" max="2028-07-28" /></td>
       <td><input id="end-date" type="date" name="end-date" max="2028-07-28" /></td>
       <td><input name="base-cost" type="number" min="0" /></td>
-      <td><input name="discounted-cost" type="number" min="0" /></td>
     </tr>
     <tr id="total-row">
-      <td colspan="8" style="text-align: right;"><strong>Total:</strong></td>
+      <td colspan="7" style="text-align: right;"><strong>Total:</strong></td>
       <td id="total-base">0</td>
       <td id="total-discount">0</td>
     </tr>

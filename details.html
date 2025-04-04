@@ -18,6 +18,7 @@
     }
     th {
       text-align: center;
+      border: 1px solid;
       background-color: #f0f0f0;
     }
     h3 {
@@ -58,23 +59,62 @@
       <th>Total Cost Per Mth</th>
       <th> Total Cost</th>
     </tr>
-    <tr>
-        <td>01-09-24</td>
-        <td>30-09-24</td>
-        <td>Sep-24</td>
+    <tr class="breakdown-row" data-start="2025-05-01" data-end="2025-05-31">
+        <td class="start-date"></td>
+        <td class="end-date"></td>
+        <td>May-25</td>
         <td>1</td>
-        <td>#REF!</td>
+        <td class="working-days"></td> <!-- calculated result here -->
         <td></td>
         <td>19,200.00</td>
         <td>19,200.00</td>
         <td>0.00%</td>
         <td>19,200.00</td>
         <td>0.00</td>
+    </tr>
+    <tr class="breakdown-row" data-start="2025-06-01" data-end="2025-06-30">
+      <td class="start-date"></td>
+      <td class="end-date"></td>
+      <td>Jun-25</td>
+      <td>1</td>
+      <td class="working-days"></td> <!-- calculated result here -->
+      <td></td>
+      <td>19,200.00</td>
+      <td>19,200.00</td>
+      <td>0.00%</td>
+      <td>19,200.00</td>
+      <td>0.00</td>
+    </tr>
+    <tr class="breakdown-row" data-start="2025-07-01" data-end="2025-07-28">
+      <td class="start-date"></td>
+      <td class="end-date"></td>
+      <td>Jul-25</td>
+      <td>1</td>
+      <td class="working-days"></td> <!-- calculated result here -->
+      <td></td>
+      <td>19,200.00</td>
+      <td>19,200.00</td>
+      <td>0.00%</td>
+      <td>19,200.00</td>
+      <td>0.00</td>
+  </tr>
+  <tr class="breakdown-row" data-start="2025-07-29" data-end="2025-07-31">
+    <td class="start-date"></td>
+    <td class="end-date"></td>
+    <td>Jul-25</td>
+    <td>2</td>
+    <td class="working-days"></td> <!-- calculated result here -->
+    <td></td>
+    <td>19,200.00</td>
+    <td>19,200.00</td>
+    <td>0.00%</td>
+    <td>19,200.00</td>
+    <td>0.00</td>
+  </tr>
   </table>
-
   <script>
     const params = new URLSearchParams(window.location.search);
-
+  
     document.getElementById('cell-name').textContent = params.get('name') || '';
     document.getElementById('cell-supplier').textContent = params.get('supplier') || '';
     document.getElementById('cell-category').textContent = params.get('category') || '';
@@ -82,6 +122,53 @@
     document.getElementById('cell-level').textContent = params.get('level') || '';
     document.getElementById('cell-start').textContent = params.get('start-date') || '';
     document.getElementById('cell-end').textContent = params.get('end-date') || '';
-  </script>
+    
+    // holidays
+    const holidays = [
+    '2025-05-01', '2025-05-12', '2025-06-07', '2025-08-09', '2025-10-20',
+    '2025-12-25'
+    ];
+
+    // working day calculator
+      function countWorkingDays(startDate, endDate) {
+    let count = 0;
+    let current = new Date(startDate);
+
+    while (current <= endDate) {
+      const day = current.getDay();
+      const yyyyMMdd = current.toISOString().split('T')[0]; // define it here
+
+      if (day !== 0 && day !== 6 && !holidays.includes(yyyyMMdd)) {
+        count++;
+      }
+
+      current.setDate(current.getDate() + 1);
+    }
+
+    return count;
+  }
+    
+    // format to dd-mm-yyyy
+    function formatDDMMYYYY(date) {
+      const dd = String(date.getDate()).padStart(2, '0');
+      const mm = String(date.getMonth() + 1).padStart(2, '0');
+      const yyyy = date.getFullYear();
+      return `${dd}-${mm}-${yyyy}`;
+    }
+  
+    // update breakdown rows
+    document.querySelectorAll('.breakdown-row').forEach(row => {
+      const startAttr = row.dataset.start;
+      const endAttr = row.dataset.end;
+      if (!startAttr || !endAttr) return;
+  
+      const startDate = new Date(startAttr + 'T00:00:00');
+      const endDate = new Date(endAttr + 'T00:00:00');
+  
+      row.querySelector('.start-date').textContent = formatDDMMYYYY(startDate);
+      row.querySelector('.end-date').textContent = formatDDMMYYYY(endDate);
+      row.querySelector('.working-days').textContent = countWorkingDays(startDate, endDate);
+    });
+  </script>  
 </body>
 </html>
